@@ -40,7 +40,18 @@ loan_file.close()
 
 @app.get("/")
 def show_all_data():
-	return all_users, all_loans
+	total_users = len(all_users)
+	total_loans = len(all_loans)
+
+	get_active_loans = [l for l in all_loans.values() if l["is_paid_off"] == 0]
+
+	total_amount_borrowed = 0 
+	for l in get_active_loans:
+		total_amount_borrowed = total_amount_borrowed + l["amount"]
+
+	main = f"Total users: {total_users} Total loans: {total_loans}, Total active loans: {len(get_active_loans)}, Total paid out: ${total_amount_borrowed}"
+
+	return main
 
 @app.get("/get_user")
 def get_user(user_id: int = Query(None, title="User_id", description="User id as it appears in dataset.")):
