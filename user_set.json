@@ -1,0 +1,93 @@
+{
+	"1": {
+		"id": 1,
+		"name": "Johnny Rose",
+		"age": 63,
+		"marital_status": "married",
+		"sharing_info_with": [2]
+	},
+	"2": {
+		"id": 2,
+		"name": "Moira Rose",
+		"age": 53,
+		"marital_status": "married",
+		"sharing_info_with": [1]
+	},
+	"3": {
+		"id": 3,
+		"name": "David Rose",
+		"age": 33,
+		"marital_status": "married",
+		"sharing_info_with": [10]
+	},
+	"4": {
+		"id": 4,
+		"name": "Stevie Budd",
+		"age": 30,
+		"marital_status": "single",
+		"sharing_info_with": []
+	},
+	"5": {
+		"id": 5,
+		"name": "Alexis Rose",
+		"age": 29,
+		"marital_status": "single",
+		"sharing_info_with": []
+	},
+	"6": {
+		"id": 6,
+		"name": "Twyla Sands",
+		"age": 30,
+		"marital_status": "single",
+		"sharing_info_with": []
+	},
+	"7": {
+		"id": 7,
+		"name": "Roland Schitt",
+		"age": 51,
+		"marital_status": "married",
+		"sharing_info_with": [8]
+	},
+	"8": {
+		"id": 8,
+		"name": "Jocelyn Schitt",
+		"age": 45,
+		"marital_status": "married",
+		"sharing_info_with": [7]
+	},
+	"9": {
+		"id": 9,
+		"name": "Ted Mullens",
+		"age": 33,
+		"marital_status": "single",
+		"sharing_info_with": []
+	},
+	"10": {
+		"id": 10,
+		"name": "Patrick Brewer",
+		"age": 35,
+		"marital_status": "single",
+		"sharing_info_with": [3]
+	},
+	"11": {
+		"id": 11,
+		"name": "Ronnie Lee",
+		"age": 58,
+		"marital_status": "married",
+		"sharing_info_with": []
+	},
+	"12": {
+		"id": 12,
+		"name": "Ray Butani",
+		"age": 57,
+		"marital_status": "single",
+		"sharing_info_with": []
+	},
+	"13": {
+		"id": 13,
+		"name": "Mutt Schitt",
+		"age": 31,
+		"marital_status": "single",
+		"sharing_info_with": []
+	}
+}
