@@ -20,12 +20,11 @@ class userObj(BaseModel):
 class loanObj(BaseModel):
 	l_id: Optional[int] = None 
 	created: Optional[str] = None 
-	modifed: Optional[str] = None
+	modified: Optional[str] = None
 	length: int 
 	is_paid_off: int
 	amount: int 
 	rate: float 
-	monthly_amount: int 
 	user_id: int 
 
 
@@ -55,21 +54,27 @@ def show_all_data():
 
 @app.get("/get_user")
 def get_user(user_id: int = Query(None, title="User_id", description="User id as it appears in dataset.")):
-	msg = "ok"
 	get_user = [user_obj for key, user_obj in all_users.items() if user_obj["id"] == user_id]
 
 	if len(get_user) > 0:
 		user = get_user[0]
 	else:
-		msg = "## User ID {user_id} does not exist."	
-		user = None
-	return msg, user
+		return HTTPException(status_code=400, detail=f"User with ID does not exist {user_id}")
+
+	return user
 
 @app.post("/create_user/")
-def create_user(user: userObj, status_code=201):
+def create_user(user: userObj):
 	## Need to set up a unique id so take the max amount we have now add one. 
 	## Ideally the DB will do this, but since we are are working with a data set. Do it for us.
 	user_id = utils.create_new_user_id(all_users)
+	
+	## Check to see if a user with the same name already exists. 
+	existing_user = [u for u in all_users.values() if user.name.lower() == u["name"].lower()]
+
+	if existing_user: 
+		return HTTPException(status_code=400, detail=f"User with that name already exists: {existing_user[0]}")
+
 	try: 
 		new_user = {
 			"id": user_id,
@@ -79,6 +84,8 @@ def create_user(user: userObj, status_code=201):
 			"sharing_info_with": user.sharing_info_with
 		}
 		all_users[user_id] = new_user
+
+
 	except Exception as e: 
 		return HTTPException(status_code=400, detail=f"Invalid data provided for new user {user}")
 
@@ -93,12 +100,11 @@ def create_loan(loan: loanObj):
 		new_loan = {
 			"id": loan_id,
 			"created": timestamp,
-			"modifed": timestamp, 
+			"modified": timestamp, 
 			"length": loan.length, 
 			"is_paid_off": 0, 
 			"amount": loan.amount,
 			"rate": loan.rate,
-			"monthly_amount": loan.monthly_amount,
 			"user_id": loan.user_id
 		}
 
@@ -111,21 +117,31 @@ def create_loan(loan: loanObj):
 @app.get("/get_schedule/{loan_id}", status_code=200)
 def get_loan_schedule(loan_id: int):
 	get_loan = [l for l in all_loans.values() if l['id'] == loan_id]
+	if not get_loan:
+		return HTTPException(status_code=404, detail=f"No loan found with that id.")
+
 	loan_data = get_loan[0]
 	schedule = utils.generate_amortization_schedule(loan_data["amount"], loan_data["rate"], loan_data["length"])
-	
-	return msg, schedule
+	print(type(schedule))
+	data = {
+		"Month": schedule["month"],
+		"Remaining Balance": schedule["remaining_balance"],
+		"Monthly Payment": schedule["monthly_payment"]
+	}
+
+	return data
 
 @app.get("/get_summary/", status_code=200)
 def get_monthly_summary(loan_id: int, month_number: int):
-	msg = 'ok'
 	get_loan = [l for l in all_loans.values() if l['id'] == loan_id]
+	if not get_loan:
+		return HTTPException(status_code=404, detail=f"No loan found with that id.")	
 	loan_data = get_loan[0]
 	
 	amortization_schedule = utils.generate_amortization_schedule(loan_data["amount"], loan_data["rate"], loan_data["length"])
 	get_amounts = utils.get_current_balances(loan_data, month_number)
 
-	return msg, get_amounts 
+	return get_amounts 
 
 @app.get("/get_loans", status_code=200)
 def get_loans(user_id: Optional[int] = Query(None, title="User_id", description="User id as it appears in dataset."), 
@@ -155,7 +171,6 @@ def get_loans(user_id: Optional[int] = Query(None, title="User_id", description=
 
 @app.put("/share_loan", status_code=204)
 def share_loan(user_id: int, account_to_be_added: int):
-	msg = 'ok'
 	main_user_account = [u for u in all_users.values() if u["id"] == user_id][0]
 	account_to_be_shared = [u for u in all_users.values() if u["id"] == account_to_be_added][0]
 
@@ -167,3 +182,6 @@ def share_loan(user_id: int, account_to_be_added: int):
 	return main_user_account
 
 
+## Change monthly payments from in db to function that determines monthly payment 
+## round numbers to float in get current balances
+## get loans is returning usering not loan information
