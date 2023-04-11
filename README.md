@@ -5,7 +5,7 @@ Two datasets have already been created, one containing unique user data and the 
 
 To get started: 
 - Install unvicorn 
-- Intall pydantic 
+- Install pydantic 
 
 Once installed, navigate to folder, and run command: 
 source bin/activate 
@@ -22,4 +22,6 @@ A few notes:
 - Ideally, these apis would not be working off json files, but actual database information 
 - For monthly payments and interest, I assumed payments are made at the end of the month 
 	and interest applied at the start of the month.
-- The root will show all user data,  
+- The root will show all user data,
+- This also assumes that there will be no two users with the same name 
+- Assume monthly payment includes interest 
