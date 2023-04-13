@@ -122,14 +122,8 @@ def get_loan_schedule(loan_id: int):
 
 	loan_data = get_loan[0]
 	schedule = utils.generate_amortization_schedule(loan_data["amount"], loan_data["rate"], loan_data["length"])
-	print(type(schedule))
-	data = {
-		"Month": schedule["month"],
-		"Remaining Balance": schedule["remaining_balance"],
-		"Monthly Payment": schedule["monthly_payment"]
-	}
 
-	return data
+	return schedule
 
 @app.get("/get_summary/", status_code=200)
 def get_monthly_summary(loan_id: int, month_number: int):
@@ -169,15 +163,33 @@ def get_loans(user_id: Optional[int] = Query(None, title="User_id", description=
 
 	return msg, user
 
-@app.put("/share_loan", status_code=204)
+@app.put("/share_loan")
 def share_loan(user_id: int, account_to_be_added: int):
-	main_user_account = [u for u in all_users.values() if u["id"] == user_id][0]
-	account_to_be_shared = [u for u in all_users.values() if u["id"] == account_to_be_added][0]
 
-	if not main_user_account or not account_to_be_added: 
-		return HTTPException(status_code=404, detail=f"No users found with those parameters: {user_id}")
+	if user_id == account_to_be_added: 
+		return HTTPException(status_code=404, detail=f"A user can't be shared with themselves.")
 
-	main_user_account['sharing_info_with'].append(account_to_be_shared["id"])
+
+	main_user_account = [u for u in all_users.values() if u["id"] == user_id]
+
+	if not main_user_account:
+		return HTTPException(status_code=404, detail=f"No users found with that id. {user_id}")
+	else: 
+		main_user_account = main_user_account[0]
+	
+	account_to_be_shared = [u for u in all_users.values() if u["id"] == account_to_be_added]
+
+	if not account_to_be_shared: 
+		return HTTPException(status_code=404, detail=f"No users found with that id {account_to_be_added}.")
+	
+	else: 
+		account_to_be_shared = account_to_be_shared[0]	
+	
+
+	if account_to_be_shared["id"] not in main_user_account["sharing_info_with"]:
+		main_user_account["sharing_info_with"].append(account_to_be_shared["id"])
+	else: 
+		print("User is already associated with account.")
 
 	return main_user_account
 
