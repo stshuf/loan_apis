@@ -25,3 +25,5 @@ A few notes:
 - The root will show all user data,
 - This also assumes that there will be no two users with the same name 
 - Assume monthly payment includes interest 
+- endpoint show_all_data, is just a nice little display for the root  
+- 
